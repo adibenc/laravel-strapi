@@ -12,10 +12,10 @@ class LaravelStrapi
 {
     public const CACHE_KEY = 'laravel-strapi-cache';
 
-    private string $strapiUrl;
-    private int $cacheTime;
-    private $token;
-    private array $headers = [];
+    protected string $strapiUrl;
+    protected int $cacheTime;
+    protected $token;
+    protected array $headers = [];
 
     public function __construct()
     {
@@ -36,10 +36,15 @@ class LaravelStrapi
 
         // Fetch and cache the collection type
         $collection = Cache::remember($cacheKey, $this->cacheTime, function () use ($url, $type, $sortKey, $sortOrder, $limit, $start, $populateString) {
-            $response = Http::withHeaders($this->headers)->get($url . '/' . $type . '?sort[0]=' . $sortKey . ':' . $sortOrder . '&pagination[limit]=' . $limit . '&pagination[start]=' . $start . '&' . $populateString);
+			$url = $url . '/' . $type . '?sort[0]=' . $sortKey . ':' . $sortOrder . '&pagination[limit]=' . $limit . '&pagination[start]=' . $start . '&' . $populateString;
+			// preson($url);
+            $response = Http::withHeaders($this->headers)
+				->get($url);
 
             return $response->json();
         });
+
+		// preson($collection);
 
         if (isset($collection['statusCode']) && $collection['statusCode'] >= 400) {
             Cache::forget($cacheKey);
@@ -166,7 +171,7 @@ class LaravelStrapi
             throw new PermissionDenied('Strapi returned a ' . $single['statusCode']);
         }
 
-        if ( !isset($single['id']) && !isset($single['data']['id'])) {
+        if (! isset($single['id'])) {
             Cache::forget($cacheKey);
 
             if ($single === null) {
@@ -192,7 +197,7 @@ class LaravelStrapi
      * This function adds the Strapi URL to the front of content in entries, collections, etc.
      * This is primarily used to change image URLs to actually point to Strapi.
      */
-    private function convertToFullUrls($array): array
+    protected function convertToFullUrls($array): array
     {
         foreach ($array as $key => $item) {
             if (is_array($item)) {
@@ -213,7 +218,7 @@ class LaravelStrapi
      * This function transforms an array of fields to populate into a string
      * to add to the end of the request URL.
      */
-    private function createPopulateString($array): string
+    protected function createPopulateString($array): string
     {
         $populateString = '';
 
