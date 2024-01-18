@@ -1,6 +1,6 @@
 {
-    "name": "dbfx/laravel-strapi",
-    "description": "Laravel wrapper for using the Strapi headless CMS",
+    "name": "adibenc/laravel-strapi",
+    "description": "Laravel wrapper for using the Strapi headless CMS with extensible class",
     "keywords": [
         "laravel",
         "strapi",
@@ -8,7 +8,7 @@
         "strapi-cms",
         "laravel-package"
     ],
-    "homepage": "https://github.com/dbfx/laravel-strapi",
+    "homepage": "https://github.com/adibenc/laravel-strapi",
     "license": "MIT",
     "authors": [
         {
